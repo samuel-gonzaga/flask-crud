@@ -12,9 +12,13 @@ def index():
 
 @main_bp.route('/submit', methods=['POST'])
 def submit():
-    fname = request.form['fname']
-    lname = request.form['lname']
-    email = request.form['email']
+    fname = request.form['fname'].strip()
+    lname = request.form['lname'].strip()
+    email = request.form['email'].strip()
+
+    if not fname or not lname or not email:
+        flash('Todos os campos são obrigatórios.')
+        return redirect(request.referrer)
 
     student = Student(fname, lname, email)
     db.session.add(student)
@@ -25,5 +29,42 @@ def submit():
         print(result.fname)
 
     flash('Estudante Adcionado com sucesso')
+
+    return redirect(url_for('main.index'))
+
+@main_bp.route('/edit/<id>', methods=['POST', 'GET'])
+def edit(id):
+    student = Student.query.get_or_404(id)
+    return render_template('edit.html', student=student)
+
+@main_bp.route('/update/<id>', methods=['POST'])
+def update(id):
+    fname = request.form['fname'].strip()
+    lname = request.form['lname'].strip()
+    email = request.form['email'].strip()
+
+    if not fname or not lname or not email:
+        flash('Todos os campos são obrigatórios.')
+        return redirect(request.referrer)
+
+    student = Student.query.get_or_404(id)
+
+    student.fname = fname
+    student.lname = lname
+    student.email = email
+
+    db.session.commit()
+
+    flash("Estudante alterado com sucesso")
+
+    return redirect(url_for('main.index'))
+
+@main_bp.route('/delete/<string:id>', methods=['GET', 'POST'])
+def delete(id):
+    student = Student.query.get_or_404(id)
+    db.session.delete(student)
+    db.session.commit()
+
+    flash("Estudante deletado com sucesso")
 
     return redirect(url_for('main.index'))

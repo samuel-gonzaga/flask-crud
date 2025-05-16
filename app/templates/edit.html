@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block body %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Card de edição -->
+      <div class="card card-body">
+        <form action="/update/{{ student.id }}" method="POST">
+          <div class="mb-3">
+            <input type="text" name="fname" value="{{ student.fname }}" class="form-control" placeholder="First Name" required>
+          </div>
+          <div class="mb-3">
+            <input type="text" name="lname" value="{{ student.lname }}" class="form-control" placeholder="Last Name" required>
+          </div>
+          <div class="mb-3">
+            <input type="email" name="email" value="{{ student.email }}" class="form-control" placeholder="Email" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            Update
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
